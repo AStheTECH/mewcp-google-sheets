@@ -1,6 +1,4 @@
-import string
-from bdb import effective
-from enum import Enum, auto
+from enum import Enum
 from typing import Any, Dict, List, Optional, TypedDict
 from xmlrpc.client import boolean
 
@@ -1191,110 +1189,667 @@ class AutoResizeDimensionsRequest(BaseModel):
     dimensions: DimensionRange
     dataSourceSheetDimensions: DataSourceSheetDimensionRange
 
+class TextPosition(BaseModel):
+    horizontalAlignment: HorizontalAlign
 
+class DataSourceChartProperties(BaseModel):
+    dataSourceId: str
+    dataExecutionStatus: DataExecutionStatus
+
+class ChartHiddenDimensionStrategy(Enum):
+    CHART_HIDDEN_DIMENSION_STRATEGY_UNSPECIFIED = "CHART_HIDDEN_DIMENSION_STRATEGY_UNSPECIFIED"
+    SKIP_HIDDEN_ROWS_AND_COLUMNS = "SKIP_HIDDEN_ROWS_AND_COLUMNS"
+    SKIP_HIDDEN_ROWS = "SKIP_HIDDEN_ROWS"
+    SKIP_HIDDEN_COLUMNS = "SKIP_HIDDEN_COLUMNS"
+    SHOW_ALL = "SHOW_ALL"
+
+class BasicChartType(Enum):
+    BASIC_CHART_TYPE_UNSPECIFIED = "BASIC_CHART_TYPE_UNSPECIFIED"
+    BAR = "BAR"
+    LINE = "LINE"
+    AREA = "AREA"
+    COLUMN = "COLUMN"
+    SCATTER = "SCATTER"
+    COMBO = "COMBO"
+    STEPPED_AREA = "STEPPED_AREA"
+
+class BasicChartLegendPosition(Enum):
+    BASIC_CHART_LEGEND_POSITION_UNSPECIFIED = "BASIC_CHART_LEGEND_POSITION_UNSPECIFIED"
+    BOTTOM_LEGEND = "BOTTOM_LEGEND"
+    LEFT_LEGEND = "LEFT_LEGEND"
+    RIGHT_LEGEND = "RIGHT_LEGEND"
+    TOP_LEGEND = "TOP_LEGEND"
+    NO_LEGEND = "NO_LEGEND"
+
+class BasicChartAxisPosition(Enum):
+    BASIC_CHART_AXIS_POSITION_UNSPECIFIED = "BASIC_CHART_AXIS_POSITION_UNSPECIFIED"
+    BOTTOM_AXIS = "BOTTOM_AXIS"
+    LEFT_AXIS = "LEFT_AXIS"
+    RIGHT_AXIS = "RIGHT_AXIS"
+
+class ViewWindowMode(Enum):
+    DEFAULT_VIEW_WINDOW_MODE = "DEFAULT_VIEW_WINDOW_MODE"
+    VIEW_WINDOW_MODE_UNSUPPORTED = "VIEW_WINDOW_MODE_UNSUPPORTED"
+    EXPLICIT = "EXPLICIT"
+    PRETTY = "PRETTY"
+
+
+class ChartAxisViewWindowOptions(BaseModel):
+    viewWindowMin: int
+    viewWindowMax: int
+    viewWindowMode: ViewWindowMode
+
+class BasicChartAxis(BaseModel):
+    position: BasicChartAxisPosition
+    title: str
+    format: TextFormat
+    titleTextPosition: TextPosition
+    viewWindowOptions: ChartAxisViewWindowOptions
+
+class ChartDateTimeRuleType(Enum):
+    CHART_DATE_TIME_RULE_TYPE_UNSPECIFIED = "CHART_DATE_TIME_RULE_TYPE_UNSPECIFIED"
+    SECOND = "SECOND"
+    MINUTE = "MINUTE"
+    HOUR = "HOUR"
+    HOUR_MINUTE = "HOUR_MINUTE"
+    HOUR_MINUTE_AMPM = "HOUR_MINUTE_AMPM"
+    DAY_OF_WEEK = "DAY_OF_WEEK"
+    DAY_OF_YEAR = "DAY_OF_YEAR"
+    DAY_OF_MONTH = "DAY_OF_MONTH"
+    DAY_MONTH = "DAY_MONTH"
+    MONTH = "MONTH"
+    QUARTER = "QUARTER"
+    YEAR = "YEAR"
+    YEAR_MONTH = "YEAR_MONTH"
+    YEAR_QUARTER = "YEAR_QUARTER"
+    YEAR_MONTH_DAY = "YEAR_MONTH_DAY"
+
+class ChartDateTimeRule(BaseModel):
+    type: ChartDateTimeRuleType
+
+class ChartHistogramRule(BaseModel):
+    minValue: int
+    maxValue: int
+    intervalSize: int
+
+class ChartGroupRule(BaseModel):
+    dateTimeRule: ChartDateTimeRule
+    histogramRule: ChartHistogramRule
+
+class ChartAggregateType(Enum):
+    CHART_AGGREGATE_TYPE_UNSPECIFIED = "CHART_AGGREGATE_TYPE_UNSPECIFIED"
+    AVERAGE = "AVERAGE"
+    COUNT = "COUNT"
+    MAX = "MAX"
+    MEDIAN = "MEDIAN"
+    MIN = "MIN"
+    SUM = "SUM"
+
+class ChartSourceRange(BaseModel):
+    sources: List[GridRange]
+
+class ChartData(BaseModel):
+    groupRule: ChartGroupRule
+    aggregateType: ChartAggregateType
+    sourceRange: ChartSourceRange
+    columnReference: DataSourceColumnReference
+
+class BasicChartDomain(BaseModel):
+    domain: ChartData
+    reversed: bool
+
+class LineDashType(Enum):
+    LINE_DASH_TYPE_UNSPECIFIED = "LINE_DASH_TYPE_UNSPECIFIED"
+    INVISIBLE = "INVISIBLE"
+    CUSTOM = "CUSTOM"
+    SOLID = "SOLID"
+    DOTTED = "DOTTED"
+    MEDIUM_BASED = "MEDIUM_BASED"
+    MEDIUM_DASHED_DOTTED = "MEDIUM_DASHED_DOTTED"
+    LONG_DASHED = "LONG_DASHED"
+    LONG_DASHED_DOTTED = "LONG_DASH_DOTTED"
+
+class LineStyle(BaseModel):
+    width: int
+    type: LineDashType
+
+class DataLabelType(BaseModel):
+    DATA_LABEL_TYPE_UNSPECIFIED = "DATA_LABEL_TYPE_UNSPECIFIED"
+    NONE = "NONE"
+    DATA = "DATA"
+    CUSTOM = "CUSTOM"
+
+class DataLabelPlacement(BaseModel):
+    DATA_LABEL_PLACEMENT_UNSPECIFIED = "DATA_LABEL_PLACEMENT_UNSPECIFIED"
+    CENTER = "CENTER"
+    LEFT = "LEFT"
+    RIGHT = "RIGHT"
+    ABOVE = "ABOVE"
+    BELOW = "BELOW"
+    INSIDE_END = "INSIDE_END"
+    INSIDE_BASE = "INSIDE_BASE"
+    OUTSIDE_END = "OUTSIDE_END"
+
+class DataLabel(BaseModel):
+    type: DataLabelType
+    textFormat: TextFormat
+    placement: DataLabelPlacement
+    customLabelData: ChartData
+
+class PointShape(Enum):
+    POINT_SHAPE_UNSPECIFIED = "POINT_SHAPE_UNSPECIFIED"
+    CIRCLE = "CIRCLE"
+    DIAMOND = "DIAMOND"
+    HEXAGON = "HEXAGON"
+    PENTAGON = "PENTAGON"
+    SQUARE = "SQUARE"
+    STAR = "STAR"
+    TRIANGLE = "TRIANGLE"
+    X_MARK = "X_MARK"
+
+class PointStyle(BaseModel):
+    size: int
+    shape: PointShape
+
+class BasicSeriesDataPointStyleOverride(BaseModel):
+    index: int
+    colorStyle: ColorStyle
+    pointStyle: PointStyle
+
+class BasicChartSeries(BaseModel):
+    series: ChartData
+    targetAxis: BasicChartAxisPosition
+    type: BasicChartType
+    lineStyle: LineStyle
+    dataLabel: DataLabel
+    color: Color
+    colorStyle: ColorStyle
+    pointStyle: PointStyle
+    styleOverrides: List[BasicSeriesDataPointStyleOverride]
+
+class BasicChartStackedType(Enum):
+    BASIC_CHART_STACKED_TYPE_UNSPECIFIED = "BASIC_CHART_STACKED_TYPE_UNSPECIFIED"
+    NOT_STACKED = "NOT_STACKED"
+    STACKED = "STACKED"
+    PERCENT_STACKED = "PERCENT_STACKED"
+
+class BasicChartCompareMode(Enum):
+    BASIC_CHART_COMPARE_MODE_UNSPECIFIED = "BASIC_CHART_COMPARE_MODE_UNSPECIFIED"
+    DATUM = "DATUM"
+    CATEGORY = "CATEGORY"
+
+class BasicChartSpec(BaseModel):
+    chartType: BasicChartType
+    legendPosition: BasicChartLegendPosition
+    axis: List[BasicChartAxis]
+    domains: List[BasicChartDomain]
+    series: List[BasicChartSeries]
+    headerCount: int
+    threeDimensional: bool
+    interpolateNulls: bool
+    stackedType: BasicChartStackedType
+    lineSmoothing: bool
+    compareMode: BasicChartCompareMode
+    totalDataLabel: DataLabel
+
+class PieChartLegendPosition(Enum):
+    PIE_CHART_LEGEND_POSITION_UNSPECIFIED = "PIE_CHART_LEGEND_POSITION_UNSPECIFIED"
+    BOTTTOM_LEGEND = "BOTTOM_LEGEND"
+    LEFT_LEGEND = "LEFT_LEGEND"
+    RIGHT_LEGEND = "RIGHT_LEGEND"
+    TOP_LEGEND = "TOP_LEGEND"
+    NO_LEGEND = "NO_LEGEND"
+    LABELED_LEGEND = "LABELED_LEGEND"
+
+class PieChartSpec(BaseModel):
+    legendPosition: PieChartLegendPosition
+    domain: ChartData
+    series: ChartData
+    threeDimensional: bool
+    pieHole: int
+
+class BubbleChartLegendPosition(Enum):
+    BUBBLE_CHART_LEGEND_POSITION_UNSPECIFIED = "BUBBLE_CHART_LEGEND_POSITION_UNSPECIFIED"
+    BOTTOM_LEGEND = "BOTTOM_LEGEND"
+    LEFT_LEGEND = "LEFT_LEGEND"
+    RIGHT_LEGEND = "RIGHT_LEGEND"
+    TOP_LEGEND = "TOP_LEGEND"
+    NO_LEGEND = "NO_LEGEND"
+    INSIDE_LEGEND = "INSIDE_LEGEND"
+
+class BubbleChartSpec(BaseModel):
+    legendPosition: BubbleChartLegendPosition
+    bubbleLabels: ChartData
+    domain: ChartData
+    series: ChartData
+    groupIds: ChartData
+    bubbleSizes: ChartData
+    bubbleOpacity: int
+    bubbleBorderColorStyle: ColorStyle
+    bubbleMaxRadiusSize: int
+    bubbleMinRadiusSize: int
+    bubbleTextStyle: TextFormat
+
+class CandleStickDomain(BaseModel):
+    data: ChartData
+    reversed: bool
+
+class CandlestickSeries:
+    data: ChartData
+
+class CandleStickData(BaseModel):
+    lowSeries: CandlestickSeries
+    openSeries: CandlestickSeries
+    closeSeries: CandlestickSeries
+    highSeries: CandlestickSeries
+
+class CandleStickChartSpec(BaseModel):
+    domain: CandleStickDomain
+    data: CandleStickData
+
+class OrgChartNodeSize(Enum):
+    ORG_CHART_LABEL_SIZE_UNSPECIFIED = "ORG_CHART_LABEL_SIZE_UNSPECIFIED"
+    SMALL = "SMALL"
+    MEDIUM = "MEDIUM"
+    LARGE = "LARGE"
+
+class OrgChartSpec(BaseModel):
+    nodeSize: OrgChartNodeSize
+    nodeColorStyle: ColorStyle
+    selectedNodeColorStyle: ColorStyle
+    labels: ChartData
+    parentLabels: ChartData
+    tooltips: ChartData
+
+class HistogramSeries(BaseModel):
+    barColorStyle: ColorStyle
+    data: ChartData
+
+class HistogramChartLegendPosition(Enum):
+    HISTOGRAM_CHART_LEGEND_POSITION_UNSPECIFIED = "HISTOGRAM_CHART_LEGEND_POSITION_UNSPECIFIED"
+    BOTTOM_LEGEND = "BOTTOM_LEGEND"
+    LEFT_LEGEND = "LEFT_LEGEND"
+    RIGHT_LEGEND = "RIGHT_LEGEND"
+    TOP_LEGEND = "TOP_LEGEND"
+    NO_LEGEND = "NO_LEGEND"
+    INSIDE_LEGEND = "INSIDE_LEGEND"
+
+class HistogramChartSpec(BaseModel):
+    series: List[HistogramSeries]
+    legendPosition: HistogramChartLegendPosition
+    showItemDividers: bool
+    bucketSize: int
+    outlierPercentile: int
+
+class WaterfallChartDomain(BaseModel):
+    data: ChartData
+    reversed: bool
+
+class WaterfallChartColumnStyle(BaseModel):
+    label: str
+    colorStyle: ColorStyle
+
+class WaterfallChartCustomSubtotal(BaseModel):
+    subtotalIndex: int
+    label: str
+    dataIsSubtotal: bool
+
+class WaterfallChartSeries(BaseModel):
+    data: ChartData
+    positiveColumnsStyle: WaterfallChartColumnStyle
+    negativeColumnsStyle: WaterfallChartColumnStyle
+    subtotalColumnsStyle: WaterfallChartColumnStyle
+    hideTrailingSubtotal: bool
+    customSubtotals: List[WaterfallChartCustomSubtotal]
+    dataLabel: DataLabel
+
+class WaterfallChartStackedType(Enum):
+    WATERFALL_STACKED_TYPE_UNSPECIFIED = "WATERFALL_STACKED_TYPE_UNSPECIFIED"
+    STACKED = "STACKED"
+    SEQUENTIAL = "SEQUENTIAL"
+
+class WaterfallChartSpec(BaseModel):
+    domain: WaterfallChartDomain
+    series: WaterfallChartSeries
+    stackedType: WaterfallChartStackedType
+    firstValueIsTotal: bool
+    hideConnectorLines: bool
+    connectorLineStyle: LineStyle
+    totalDataLabel: DataLabel
+
+class TreemapChartColorScale(BaseModel):
+    minValueColorStyle: ColorStyle
+    midValueColorStyle: ColorStyle
+    maxValueColorStyle: ColorStyle
+    noDataColorStyle: ColorStyle
+
+class TreemapChartSpec(BaseModel):
+    labels: ChartData
+    parentLabels: ChartData
+    sizeData: ChartData
+    colorData: ChartData
+    textFormat: TextFormat
+    levels: int
+    hintedLevels: int
+    minValue: int
+    maxValue: int
+    headerColor: Color
+    headerColorStyle: ColorStyle
+    colorScale: TreemapChartColorScale
+    hideToolTips: bool
+
+class KeyValueFormat(BaseModel):
+    textFormat: TextFormat
+    position: TextPosition
+
+class ComparisonType(Enum):
+    COMPARISON_TYPE_UNDEFINED = "COMPARISON_TYPE_UNDEFINED"
+    ABSOLUTE_DIFFERENCE = "ABSOLUTE_DIFFERENCE"
+    PERCENTAGE_DIFFERENCE = "PERCENTAGE_DIFFERENCE"
+
+class BaselineValueFormat(BaseModel):
+    comparisonType: ComparisonType
+    textFormat: TextFormat
+    position: TextPosition
+    description: str
+    positiveColorStyle: ColorStyle
+    negativeColorStyle: ColorStyle
+
+class ChartNumberFormatSource(Enum):
+    CHART_NUMBER_FORMAT_SOURCE_UNDEFINED = "CHART_NUMBER_FORMAT_SOURCE_UNDEFINED"
+    FROM_DATA = "FROM_DATA"
+    CUSTOM = "CUSTOM"
+
+class ChartCustomNumberFormatOptions(Enum):
+    prefix: str
+    suffix: str
+
+class ScorecardChartSpec(BaseModel):
+    keyValueData: ChartData
+    baselineValueData: ChartData
+    aggregateType: ChartAggregateType
+    keyValueFormat: KeyValueFormat
+    baselineValueFormat: BaselineValueFormat
+    scaleFactor: int
+    numberFormatSource: ChartNumberFormatSource
+    customFormatOptions: ChartCustomNumberFormatOptions
+
+class ChartSpec(BaseModel):
+    title: str
+    altText: str
+    titleTextFormat: TextFormat
+    titleTextPosition: TextPosition
+    subtitle: str
+    subtitleTextFormat: TextFormat
+    subtitleTextPosition: TextPosition
+    fontName: str
+    maximized: bool
+    backgroundColor: Color
+    backgroundColorStyle: ColorStyle
+    dataSourceChartProperties: DataSourceChartProperties
+    filterSpecs: List[FilterSpec]
+    sortSpecs: List[SortSpec]
+    hiddenDimensionStrategy: ChartHiddenDimensionStrategy
+    basicChart: BasicChartSpec
+    pieChart: PieChartSpec
+    bubbleChart: BubbleChartSpec
+    candlestickChart: CandleStickChartSpec
+    orgChart: OrgChartSpec
+    histogramChart: HistogramChartSpec
+    waterfallChart: WaterfallChartSpec
+    treemapChart: TreemapChartSpec
+    scorecardChart: ScorecardChartSpec
+
+
+class EmbeddedObjectBorder(BaseModel):
+    colorStyle: ColorStyle
 
 class EmbeddedChart(BaseModel):
-    pass
+    chartId: int
+    spec: ChartSpec
+    position: EmbeddedObjectPosition
+    border: EmbeddedObjectBorder
+
 
 class AddChartRequest(BaseModel):
     chart: EmbeddedChart
 
 
 class UpdateChartSpecRequest(BaseModel):
-    pass
+    chartId: int
+    spec: ChartSpec
 
+class BandingProperties(BaseModel):
+    headerColorStyle: ColorStyle
+    firstBandColorStyle: ColorStyle
+    secondBandColorStyle: ColorStyle
+    footerColorStyle: ColorStyle
+
+class BandedRange(BaseModel):
+    bandedRangeId: int
+    bandedRangeReference: str
+    range: GridRange
+    rowProperties: BandingProperties
+    columnProperties: BandingProperties
 
 class UpdateBandingRequest(BaseModel):
-    pass
-
+    bandedRange: BandedRange
+    fields: str
 
 class AddBandingRequest(BaseModel):
-    pass
+    bandedRange: BandedRange
 
 
 class DeleteBandingRequest(BaseModel):
-    pass
+    bandedRangeId: int
 
 
 class CreateDeveloperMetadataRequest(BaseModel):
-    pass
+    developerMetadata: DeveloperMetadata
 
+class DeveloperMetadataLocationMatchingStrategy(Enum):
+    DEVELOPER_METADATA_LOCATION_MATCHING_STRATEGY_UNSPECIFIED = "DEVELOPER_METADATA_LOCATION_MATCHING_STRATEGY_UNSPECIFIED"
+    EXACT_LOCATION = "EXACT_LOCATION"
+    INTERSECTING_LOCATION = "INTERSECTING_LOCATION"
+
+class DeveloperMetadataLookup(BaseModel):
+    locationType: DeveloperMetadataLocationType
+    metadataLocation: DeveloperMetadataLocation
+    locationMatchingStrategy: DeveloperMetadataLocationMatchingStrategy
+    metadataId: int
+    metadataKey: str
+    metadataValue: str
+    visibility: DeveloperMetadataVisibility
+
+class DataFilter(BaseModel):
+    developerMetadataLookup: DeveloperMetadataLookup
+    a1Range: str
+    gridRange: GridRange
 
 class UpdateDeveloperMetadataRequest(BaseModel):
-    pass
+    dataFilters: List[DataFilter]
+    developerMetadata: DeveloperMetadata
+    fields: str
 
 
 class DeleteDeveloperMetadataRequest(BaseModel):
-    pass
+    dataFilter: DataFilter
 
 
 class RandomizeRangeRequest(BaseModel):
-    pass
+    range: GridRange
 
 
 class AddDimensionGroupRequest(BaseModel):
-    pass
+    range: DimensionRange
 
 
 class DeleteDimensionGroupRequest(BaseModel):
-    pass
+    range: DimensionRange
 
+class DimensionGroup(BaseModel):
+    range: DimensionRange
+    depth: int
+    collapsed: bool
 
 class UpdateDimensionGroupRequest(BaseModel):
-    pass
-
+    dimensionGroup: DimensionGroup
+    fields: str
 
 class TrimWhitespaceRequest(BaseModel):
-    pass
+    range: GridRange
 
 
 class DeleteDuplicatesRequest(BaseModel):
-    pass
+    range: GridRange
+    comparisonColumns: List[DimensionRange]
 
 
 class UpdateEmbeddedObjectBorderRequest(BaseModel):
-    pass
+    objectId: int
+    border: EmbeddedObjectBorder
+    fields: str
 
+class SlicerSpec(BaseModel):
+    dataRange: GridRange
+    filterCriteria: FilterCriteria
+    columnIndex: int
+    applyToPivotTables: bool
+    title: str
+    textFormat: TextFormat
+    backgroundColorStyle: ColorStyle
+    horizontalAlignment: HorizontalAlign
+
+class Slicer(BaseModel):
+    slicerId: int
+    spec: SlicerSpec
+    position: EmbeddedObjectPosition
 
 class AddSlicerRequest(BaseModel):
-    pass
+    slicer: Slicer
 
 
 class UpdateSlicerSpecRequest(BaseModel):
-    pass
+    slicerId: int
+    spec: SlicerSpec
+    fields: str
 
+class DataSourceParameter(BaseModel):
+    name: str
+    namedRangeId: str
+    range: GridRange
+
+class BigQueryQuerySpec(BaseModel):
+    rawQuery: str
+
+class BigQueryTableSpec(BaseModel):
+    tableProjectId: str
+    tableId: str
+    datasetId: str
+
+class BigQueryDataSourceSpec(BaseModel):
+    projectId: str
+    querySpec: BigQueryQuerySpec
+    tableSpec: BigQueryTableSpec
+
+class LookerDataSourceSpec(BaseModel):
+    instanceUri: str
+    model: str
+    explore: str
+
+class DataSourceSpec(BaseModel):
+    parameters: DataSourceParameter
+    bigQuery: BigQueryDataSourceSpec
+    looker: LookerDataSourceSpec
+
+class DataSource(BaseModel):
+    dataSourceId: str
+    spec: DataSourceSpec
+    calculatedColumns: DataSourceColumn
+    sheetId: int
 
 class AddDataSourceRequest(BaseModel):
-    pass
+    dataSource: DataSource
 
 
 class UpdateDataSourceRequest(BaseModel):
-    pass
+    dataSource: DataSource
+    fields: str
 
 
 class DeleteDataSourceRequest(BaseModel):
-    pass
+    dataSourceId: str
 
+class DataSourceObjectReference(BaseModel):
+    sheetId: str
+    chartId: int
+    dataSourceTableAnchorCell: GridCoordinate
+    dataSourcePivotTableAnchorCell: GridCoordinate
+    dataSourceFormulaCell: GridCoordinate
+
+class DataSourceObjectReferences(BaseModel):
+    references: List[DataSourceObjectReference]
 
 class RefreshDataSourceRequest(BaseModel):
-    pass
+    force: bool
+    references: DataSourceObjectReferences
 
 
 class CancelDataSourceRefreshRequest(BaseModel):
-    pass
+    references: DataSourceObjectReferences
+    dataSourceId: str
+    isAll: bool
 
+class TableRowsProperties(BaseModel):
+    headerColorStyle: ColorStyle
+    firstBandColorStyle: ColorStyle
+    secondBandColorStyle: ColorStyle
+    footerColorStyle: ColorStyle
+
+class ColumnType(Enum):
+    COLUMN_TYPE_UNSPECIFIED = "COLUMN_TYPE_UNSPECIFIED"
+    DOUBLE = "DOUBLE"
+    CURRENCY = "CURRENCY"
+    PERCENT = "PERCENT"
+    DATE = "DATE"
+    TIME = "TIME"
+    DATE_TIME = "DATE_TIME"
+    TEXT = "TEXT"
+    BOOLEAN = "BOOLEAN"
+    DROPDOWN = "DROPDOWN"
+    FILES_CHIP = "FILES_CHIP"
+    PEOPLE_CHIP = "PEOPLE_CHIP"
+    FINANCE_CHIP = "FINANCE_CHIP"
+    PLACE_CHIP = "PLACE_CHIP"
+    RATINGS_CHIP = "RATINGS_CHIP"
+
+class TableColumnDataValidationRule(BaseModel):
+    condition: BooleanCondition
+
+class TableColumnProperties(BaseModel):
+    columnIndex: int
+    columnName: str
+    columnType: ColumnType
+    dataValidationRule: TableColumnDataValidationRule
+
+class Table(BaseModel):
+    tableId: str
+    name: str
+    range: GridRange
+    rowsProperties: TableRowsProperties
+    columnProperties: List[TableColumnProperties]
 
 class AddTableRequest(BaseModel):
-    pass
+    table: Table
 
 
 class UpdateTableRequest(BaseModel):
-    pass
+    table: Table
+    fields: str
 
 
 class DeleteTableRequest(BaseModel):
-    pass
-
+    tableId: str
 
 class Request(BaseModel):
     updateSpreadsheetProperties: UpdateSpreadsheetPropertiesRequest
@@ -1367,13 +1922,215 @@ class Request(BaseModel):
     updateTable: UpdateTableRequest
     deleteTable: DeleteTableRequest
 
+class AddNamedRangeResponse(BaseModel):
+    namedRange: NamedRange
+
+class AddSheetResponse(BaseModel):
+    properties: SheetProperties
+
+class AddFilterViewResponse(BaseModel):
+    filter: FilterView
+
+class DuplicateFilterViewResponse(BaseModel):
+    filter: FilterView
+
+class DuplicateSheetResponse(BaseModel):
+    properties: SheetProperties
+
+class FindReplaceResponse(BaseModel):
+    valuesChanged: int
+    formulasChanged: int
+    rowsChanged: int
+    sheetsChanged: int
+    occurrencesChanged: int
+
+class UpdateEmbeddedObjectPositionResponse(BaseModel):
+    position: EmbeddedObjectPosition
+
+class UpdateConditionalFormatRuleResponse(BaseModel):
+    newrule: ConditionalFormatRule
+    newIndex: int
+    oldRule: ConditionalFormatRule
+    oldIndex: int
+
+class DeleteConditionalFormatRuleResponse(BaseModel):
+    rule: ConditionalFormatRule
+
+class AddProtectedRangeResponse(BaseModel):
+    protectedRange: ProtectedRange
+
+class AddChartResponse(BaseModel):
+    chart: EmbeddedChart
+
+class AddBandingResponse(BaseModel):
+    bandedRange: BandedRange
+
+class CreateDeveloperMetadataResponse(BaseModel):
+    developerMetadata: DeveloperMetadata
+
+class UpdateDeveloperMetadataResponse(BaseModel):
+    developerMetadata: DeveloperMetadata
+
+class DeleteDeveloperMetadataResponse(BaseModel):
+    deletedDeveloperMetadata: List[DeveloperMetadata]
+
+class AddDimensionGroupResponse(BaseModel):
+    dimensionGroups: List[DimensionGroup]
+
+class DeleteDimensionGroupResponse(BaseModel):
+    dimensionGroups: List[DimensionGroup]
+
+class TrimWhitespaceResponse(BaseModel):
+    cellsChangedCount: int
+
+class DeleteDuplicatesResponse(BaseModel):
+    duplicatesRemovedCount: int
+
+class AddSlicerResponse(BaseModel):
+    slicer: Slicer
+
+class AddDataSourceResponse(BaseModel):
+    dataSource: DataSource
+    dataExecutionStatus: DataExecutionStatus
+
+class UpdateDataSourceResponse(BaseModel):
+    dataSource: DataSource
+    dataExecutionStatus: DataExecutionStatus
+
+class RefreshDataSourceObjectExecutionStatus(BaseModel):
+    reference: DataSourceObjectReference
+    dataExecutionStatus: DataExecutionStatus
+
+class RefreshDataSourceResponse(BaseModel):
+    statuses: List[RefreshDataSourceObjectExecutionStatus]
+
+class RefreshCancellationState(Enum):
+    REFRESH_CANCELLATION_STATE_UNSPECIFIED = "REFRESH_CANCELLATION_STATE_UNSPECIFIED"
+    CANCEL_SUCCEEDED = "CANCEL_SUCCEEDED"
+    CANCEL_FAILED = "CANCEL_FAILED"
+
+class RefreshCancellationErrorCode(Enum):
+    REFRESH_CANCELLATION_ERROR_CODE_UNSPECIFIED = "REFRESH_CANCELLATION_ERROR_CODE_UNSPECIFIED"
+    EXECUTION_NOT_FOUND = "EXECUTION_NOT_FOUND"
+    CANCEL_PERMISSION_DENIED = "CANCEL_PERMISSION_DENIED"
+    QUERY_EXECUTION_COMPLETED = "QUERY_EXECUTION_COMPLETED"
+    CONCURRENT_CANCELLATION = "CONCURRENT_CANCELLATION"
+    CANCEL_OTHER_ERROR = "CANCEL_OTHER_ERROR"
+
+class RefreshCancellationStatus(BaseModel):
+    state: RefreshCancellationState
+    errorCode: RefreshCancellationErrorCode
+
+class CancelDataSourceRefreshStatus(BaseModel):
+    reference: DataSourceObjectReference
+    refreshCancellationStatus: RefreshCancellationStatus
+
+class CancelDataSourceRefreshResponse(BaseModel):
+    statuses: List[CancelDataSourceRefreshStatus]
+
+class AddTableResponse(BaseModel):
+    table: Table
+
 
 class Response(BaseModel):
+    addNamedRange: AddNamedRangeResponse
+    addSheet: AddSheetResponse
+    addFilterView: AddFilterViewResponse
+    duplicateFilterView: DuplicateFilterViewResponse
+    duplicateSheet: DuplicateSheetResponse
+    findReplace: FindReplaceResponse
+    updateEmbeddedObjectPosition: UpdateEmbeddedObjectPositionResponse
+    updateConditionalFormatRule: UpdateConditionalFormatRuleResponse
+    deleteConditionalFormatRule: DeleteConditionalFormatRuleResponse
+    addProtectedRange: AddProtectedRangeResponse
+    addChart: AddChartResponse
+    addBanding: AddBandingResponse
+    createDeveloperMetadata: CreateDeveloperMetadataResponse
+    updateDeveloperMetadata: UpdateDeveloperMetadataResponse
+    deleteDeveloperMetadata: DeleteDeveloperMetadataResponse
+    addDimensionGroup: AddDimensionGroupResponse
+    deleteDimensionGroup: DeleteDimensionGroupResponse
+    trimWhitespace: TrimWhitespaceResponse
+    deleteDuplicates: DeleteDuplicatesResponse
+    addSlicer: AddSlicerResponse
+    addDataSource: AddDataSourceResponse
+    updateDataSource: UpdateDataSourceResponse
+    refreshDataSource: RefreshDataSourceResponse
+    cancelDataSourceRefresh: CancelDataSourceRefreshResponse
+    addTable: AddTableResponse
+
+class GridData(BaseModel):
     pass
 
+class Sheet(BaseModel):
+    properties: SheetProperties
+    data: List[GridData]
+    merges: List[GridRange]
+    conditionalFormats: List[ConditionalFormatRule]
+    filterViews: List[FilterView]
+    protectedRanges: List[ProtectedRange]
+    basicFilter: BasicFilter
+    charts: List[EmbeddedChart]
+    bandedRanges: List[BandedRange]
+    developerMetadata: List[DeveloperMetadata]
+    rowGroups: List[DimensionGroup]
+    columnGroups: List[DimensionGroup]
+    slicers: List[Slicer]
+    tables: List[Table]
+
+class DataSourceRefreshScope(Enum):
+    DATA_SOURCE_REFRESH_SCOPE_UNSPECIFIED = "DATA_SOURCE_REFRESH_SCOPE_UNSPECIFIED"
+    ALL_DATA_SOURCES = "ALL_DATA_SOURCES"
+
+class TimeOfDay(BaseModel):
+    hours: int
+    minutes: int
+    seconds: int
+    nanos: int
+
+class DataSourceRefreshDailySchedule(BaseModel):
+    startTime: TimeOfDay
+
+class Interval(BaseModel):
+    startTime: str
+    endTime: str
+
+class DayOfWeek(Enum):
+    DAY_OF_WEEK_UNSPECIFIED = "DAY_OF_WEEK_UNSPECIFIED"
+    MONDAY = "MONDAY"
+    TUESDAY = "TUESDAY"
+    WEDNESDAY = "WEDNESDAY"
+    THURSDAY = "THURSDAY"
+    FRIDAY = "FRIDAY"
+    SATURDAY = "SATURDAY"
+    SUNDAY = "SUNDAY"
+
+class DataSourceRefreshMonthlySchedule(BaseModel):
+    startTime: TimeOfDay
+    daysOfMonth: List[int]
+
+class DataSourceRefreshWeeklySchedule(BaseModel):
+    startTime: TimeOfDay
+    daysOfWeek: DayOfWeek
+
+
+class DataSourceRefreshSchedule(BaseModel):
+    enabled: bool
+    refreshScope: DataSourceRefreshScope
+    nextRun: Interval
+    dailySchedule: DataSourceRefreshDailySchedule
+    weeklySchedule: DataSourceRefreshWeeklySchedule
+    monthlySchedule: DataSourceRefreshMonthlySchedule
 
 class Spreadsheet(BaseModel):
-    pass
+    spreadsheetId: str
+    properties: SpreadsheetProperties
+    sheets: List[Sheet]
+    namedRanges: List[NamedRange]
+    spreadsheetUrl: str
+    developerMetadata: List[DeveloperMetadata]
+    dataSources: List[DataSource]
+    dataSourceSchedules: List[DataSourceRefreshSchedule]
 
 
 class BatchUpdateSpreadsheetRequest(BaseModel):
