@@ -2062,7 +2062,11 @@ class Response(BaseModel):
     addTable: AddTableResponse
 
 class GridData(BaseModel):
-    pass
+    startRow: int
+    startColumn: int
+    rowData: List[RowData]
+    rowMetadata: List[DimensionProperties]
+    columnMetadata: List[DimensionProperties]
 
 class Sheet(BaseModel):
     properties: SheetProperties
