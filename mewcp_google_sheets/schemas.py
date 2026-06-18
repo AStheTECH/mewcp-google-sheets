@@ -438,7 +438,7 @@ class DimensionRange(BaseModel):
     dimension: Dimension = Field(..., description="The dimension of the span.")
     startIndex: int = Field(
         ..., description="The start (inclusive) of the span, or not set if unbounded."
-    )DataSourceColumnReference
+    )
     endIndex: int = Field(
         ..., description="The end (exclusive) of the span, or not set if unbounded."
     )
@@ -472,7 +472,7 @@ class DimensionProperties(BaseModel):
     hiddenByUser: bool
     pixelSize: int
     developerMetadata: List[DeveloperMetadata]
-    dataSourceColumnReference:
+    dataSourceColumnReference: DataSourceColumnReference
 
 
 class DataSourceSheetDimensionRange(BaseModel):
