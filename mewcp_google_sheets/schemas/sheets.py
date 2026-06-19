@@ -1,28 +1,42 @@
 from enum import Enum
-from typing import List, Dict
+from typing import List
 from pydantic import Field, BaseModel
 
-from other import (
+from .other import (
     DataSourceColumn,
     DataExecutionStatus,
     DataSourceColumnReference,
     BooleanCondition,
     SortSpec,
     HorizontalAlign,
-    EmbeddedObjectPosition
+    EmbeddedObjectPosition,
+    FilterCriteria
 )
 
-from cells import (
+from .cells import (
     CellData,
     CellFormat,
     FilterSpec,
     TextFormat
 )
 
-from spreadsheet import (
+from .spreadsheets import (
     GridRange,
     ColorStyle,
 )
+
+from .developer_metadata import (
+    DeveloperMetadata
+)
+
+from .api_types import (
+    DimensionRange
+)
+
+from .charts import (
+    EmbeddedChart
+)
+
 
 
 class GridProperties(BaseModel):

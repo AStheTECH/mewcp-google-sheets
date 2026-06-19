@@ -4,6 +4,8 @@ from xmlrpc.client import boolean
 
 from pydantic import BaseModel, Field
 
+from requests import (Request)
+
 
 class ToolError(TypedDict):
     error: str
@@ -274,16 +276,6 @@ class SpreadsheetProperties(BaseModel):
     )
 
 
-class UpdateSpreadsheetPropertiesRequest(BaseModel):
-    properties: SpreadsheetProperties = Field(
-        ..., description="The properties to update."
-    )
-    fields: str = Field(
-        ...,
-        description="The fields that should be updated. At least one field must be specified. The root 'properties' is implied and should not be specified. A single '*' can be used as short-hand for listing every field.",
-    )
-
-
 class SheetType(Enum):
     SHEET_TYPE_UNSPECIFIED = "SHEET_TYPE_UNSPECIFIED"
     GRID = "GRID"
@@ -409,13 +401,6 @@ class SheetProperties(BaseModel):
     )
 
 
-class UpdateSheetPropertiesRequest(BaseModel):
-    properties: SheetProperties
-    fields: str = Field(
-        ...,
-        description="The fields that should be updated. At least one field must be specified. The root properties is implied and should not be specified. A single '*' can be used as short-hand for listing every field.",
-    )
-
 
 class DeveloperMetadataLocationType(Enum):
     DEVELOPER_METADATA_LOCATION_TYPE_UNSPECIFIED = (
@@ -482,13 +467,6 @@ class DataSourceSheetDimensionRange(BaseModel):
     columnReferences: List[DataSourceColumnReference] = Field(
         ..., description="The columns on the data source sheet."
     )
-
-
-class UpdateDimensionPropertiesRequest(BaseModel):
-    properties: DimensionProperties
-    fields: str
-    range: DimensionRange
-    dataSourceSheetRange: DataSourceSheetDimensionRange
 
 
 class GridRange(BaseModel):
@@ -1852,77 +1830,6 @@ class UpdateTableRequest(BaseModel):
 
 class DeleteTableRequest(BaseModel):
     tableId: str
-
-class Request(BaseModel):
-    updateSpreadsheetProperties: UpdateSpreadsheetPropertiesRequest
-    updateSheetProperties: UpdateSheetPropertiesRequest
-    updateDimensionProperties: UpdateDimensionPropertiesRequest
-    updateNamedRange: UpdateNamedRangeRequest
-    repeatCell: RepeatCellRequest
-    addNamedRange: AddNamedRangeRequest
-    deleteNamedRange: DeleteNamedRangeRequest
-    addSheet: AddSheetRequest
-    deleteSheet: DeleteSheetRequest
-    autoFill: AutoFillRequest
-    cutPaste: CutPasteRequest
-    copyPaste: CopyPasteRequest
-    mergeCells: MergeCellsRequest
-    unmergeCells: UnmergeCellsRequest
-    updateBorders: UpdateBordersRequest
-    updateCells: UpdateCellsRequest
-    addFilterView: AddFilterViewRequest
-    appendCells: AppendCellsRequest
-    clearBasicFilter: ClearBasicFilterRequest
-    deleteDimension: DeleteDimensionRequest
-    deleteEmbeddedObject: DeleteEmbeddedObjectRequest
-    deleteFilterView: DeleteFilterViewRequest
-    duplicateFilterView: DuplicateFilterViewRequest
-    duplicateSheet: DuplicateSheetRequest
-    findReplace: FindReplaceRequest
-    insertDimension: InsertDimensionRequest
-    insertRange: InsertRangeRequest
-    moveDimension: MoveDimensionRequest
-    updateEmbeddedObjectPosition: UpdateEmbeddedObjectPositionRequest
-    pasteData: PasteDataRequest
-    textToColumns: TextToColumnsRequest
-    updateFilterView: UpdateFilterViewRequest
-    deleteRange: DeleteRangeRequest
-    appendDimension: AppendDimensionRequest
-    addConditionalFormatRule: AddConditionalFormatRuleRequest
-    updateConditionalFormatRule: UpdateConditionalFormatRuleRequest
-    deleteConditionalFormatRule: DeleteConditionalFormatRuleRequest
-    sortRange: SortRangeRequest
-    setDataValidation: SetDataValidationRequest
-    setBasicFilter: SetBasicFilterRequest
-    addProtectedRange: AddProtectedRangeRequest
-    updateProtectedRange: UpdateProtectedRangeRequest
-    deleteProtectedRange: DeleteProtectedRangeRequest
-    autoResizeDimensions: AutoResizeDimensionsRequest
-    addChart: AddChartRequest
-    updateChartSpec: UpdateChartSpecRequest
-    updateBanding: UpdateBandingRequest
-    addBanding: AddBandingRequest
-    deleteBanding: DeleteBandingRequest
-    createDeveloperMetadata: CreateDeveloperMetadataRequest
-    updateDeveloperMetadata: UpdateDeveloperMetadataRequest
-    deleteDeveloperMetadata: DeleteDeveloperMetadataRequest
-    randomizeRange: RandomizeRangeRequest
-    addDimensionGroup: AddDimensionGroupRequest
-    deleteDimensionGroup: DeleteDimensionGroupRequest
-    updateDimensionGroup: UpdateDimensionGroupRequest
-    trimWhitespace: TrimWhitespaceRequest
-    deleteDuplicates: DeleteDuplicatesRequest
-    updateEmbeddedObjectBorder: UpdateEmbeddedObjectBorderRequest
-    addSlicer: AddSlicerRequest
-    updateSlicerSpec: UpdateSlicerSpecRequest
-    addDataSource: AddDataSourceRequest
-    updateDataSource: UpdateDataSourceRequest
-    deleteDataSource: DeleteDataSourceRequest
-    refreshDataSource: RefreshDataSourceRequest
-    cancelDataSourceRefresh: CancelDataSourceRefreshRequest
-    addTable: AddTableRequest
-    updateTable: UpdateTableRequest
-    deleteTable: DeleteTableRequest
 
 class AddNamedRangeResponse(BaseModel):
     namedRange: NamedRange

@@ -2,7 +2,7 @@ from enum import Enum
 from typing import List
 from pydantic import BaseModel, Field
 
-from other import (
+from .other import (
     ExtendedValue,
     ColorStyle,
     BooleanCondition,
@@ -14,7 +14,7 @@ from other import (
     SortSpec
 )
 
-from pivot_tables import (
+from .pivot_tables import (
     PivotTable
 )
 

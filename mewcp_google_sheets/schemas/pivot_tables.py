@@ -2,7 +2,7 @@ from enum import Enum
 from typing import List, Dict, Optional
 from pydantic import BaseModel, Field
 
-from other import (
+from .other import (
     GridRange,
     DataExecutionStatus,
     ExtendedValue,

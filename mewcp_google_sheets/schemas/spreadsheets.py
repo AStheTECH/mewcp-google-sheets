@@ -9,6 +9,18 @@ from .other import (
     ColorStyle
 )
 
+from .cells import (
+    CellFormat
+)
+
+from .sheets import (
+    Sheet
+)
+
+from .developer_metadata import (
+    DeveloperMetadata
+)
+
 class Interval(BaseModel):
     startTime: str
     endTime: str
