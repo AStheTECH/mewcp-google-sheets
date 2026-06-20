@@ -7,7 +7,9 @@ from fastmcp import FastMCP
 
 from schemas import (
     Spreadsheet,
-    DeveloperMetadata
+    DeveloperMetadata,
+    SheetProperties,
+    ValueRange
 )
 
 from models import (
@@ -17,7 +19,14 @@ from models import (
     GetSpreadsheetQueryParams,
     GetByDataFilterRequestBody,
     SearchDeveloperMetadataRequestBody,
-    SearchDeveloperMetadataResponse
+    SearchDeveloperMetadataResponse,
+    CopyToRequestBody,
+    AppendValuesQueryParams,
+    AppendValuesResponse,
+    BatchClearValuesRequestBody,
+    BatchClearValuesResponse,
+    BatchClearByDataFilterRequestBody,
+    BatchClearByDataFilterResponse
 )
 from .service import get_service
 
@@ -115,3 +124,54 @@ def search_developerMetadata(spreadsheetId: str = Field(..., description="The ID
     except Exception as exc:
         logger.error(f"error while searching the developer metadata: {exc}", exc_info=True)
         return {"error": str(exc)}
+
+@mcp.tool(
+    name="copyTo_sheets",
+    description="Copies a single sheet from a spreadsheet to another spreadsheet. Returns the properties of the newly created sheet."
+)
+def copyTo_sheets(spreadsheetId: str = Field(..., description="The ID of the spreadsheet containing the sheet to copy."), sheetId: str = Field(..., description="The ID of the sheet to copy."), body: CopyToRequestBody = Field(..., description="The request body contains data with destination spreadsheet Id")) -> SheetProperties | ToolError:
+    try:
+        response = get_service().spreadsheets().sheets().copyTo(spreadsheetId = spreadsheetId, sheetId = sheetId, body = body).execute()
+        return response
+    except Exception as exc:
+        logger.error(f"error while copying the sheet: {exc}", exc_info=True)
+        return {"error": str(exc)}
+
+@mcp.tool(
+    name="append_values_spreadsheets",
+    description="Appends values to a spreadsheet. The input range is used to search for existing data and find a 'table' within that range. Values will be appended to the next row of the table, starting with the first column of the table."
+)
+def append_values_spreadsheets(spreadsheetId: str = Field(..., description="The ID of the spreadsheet to update."), range: str = Field(..., description="The A1 notation of a range to search for a logical table of data. Values are appended after the last row of the table."), params: AppendValuesQueryParams = Field(..., description="Query Parameters to append values to spreadsheet"), body: ValueRange = Field(..., description="The request body contains an instance of ValueRange.")) -> AppendValuesResponse | ToolError:
+    try:
+        response = get_service().spreadsheets().values().append(spreadsheetId = spreadsheetId, range = range, params = params, body = body).execute()
+        return response
+    except Exception as exc:
+        logger.error(f"error while appending values to the spreadsheet: {exc}", exc_info=True)
+        return {"error": str(exc)}
+
+@mcp.tool(
+    name="batchClear_values_spreadsheets",
+    description="Clears one or more ranges of values from a spreadsheet. The caller must specify the spreadsheet ID and one or more ranges. Only values are cleared -- all other properties of the cell (such as formatting and data validation) are kept."
+)
+def batchClear_values_spreadsheets(spreadsheetId: str = Field(..., description="The ID of the spreadsheet to update."), body: BatchClearValuesRequestBody = Field(..., description="The request body contains the ranges to clear")) -> BatchClearValuesResponse | ToolError:
+    try:
+        response = get_service().spreadsheets().values().batchClear(spreadsheetId = spreadsheetId, body = body).execute()
+        return response
+    except Exception as exc:
+        logger.error(f"error while batch clearing values from ranges supplied: {exc}", exc_info=True)
+        return {"error": str(exc)}
+
+
+@mcp.tool(
+    name="batchClearByDataFilter_values_spreadsheets",
+    description="Clears one or more ranges of values from a spreadsheet. For more information, see Read, write, and search metadata. The caller must specify the spreadsheet ID and one or more DataFilters. Ranges matching any of the specified data filters will be cleared. Only values are cleared -- all other properties of the cell (such as formatting, data validation, etc.) are kept."
+)
+def batchClearByDataFilter_values_spreadsheets(spreadsheetId: str = Field(..., description="The ID of the spreadsheet to update."), body: BatchClearByDataFilterRequestBody = Field(..., description="The request body contains the data filters used to determine the ranges to clear")) -> BatchClearByDataFilterResponse | ToolError:
+    try:
+        response = get_service().spreadsheets().values().batchClearByDataFilter(spreadsheetId = spreadsheetId, body = body).execute()
+        return response
+    except Exception as exc:
+        logger.error(f"error while batch clearing values based on data filters supplied: {exc}", exc_info=True)
+        return {"error": str(exc)}
+
+

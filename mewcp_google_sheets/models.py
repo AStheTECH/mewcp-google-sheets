@@ -1,9 +1,14 @@
+from enum import Enum
 from schemas import (
     Request,
     Response,
     Spreadsheet,
     DataFilter,
-    DeveloperMetadata
+    DeveloperMetadata,
+    ValueInputOption,
+    ValueRenderOption,
+    DateTimeRenderOption,
+    UpdateValuesResponse
 )
 from typing import List, TypedDict
 from pydantic import BaseModel, Field
@@ -63,3 +68,35 @@ class MatchedDeveloperMetadata(BaseModel):
 
 class SearchDeveloperMetadataResponse(BaseModel):
     matchedDeveloperMetadata: List[MatchedDeveloperMetadata] = Field(..., description="The metadata matching the criteria of the search request.")
+
+class CopyToRequestBody(BaseModel):
+    destinationSpreadsheetId: str = Field(..., description="The ID of the spreadsheet to copy the sheet to.")
+
+class InsertDataOption(Enum):
+    OVERWRITE = "OVERWRITE"
+    INSERT_ROWS = "INSERT_ROWS"
+class AppendValuesQueryParams(BaseModel):
+    valueInputOption: ValueInputOption = Field(..., description="How the input data should be interpreted.")
+    insertDataOption: InsertDataOption = Field(..., description="How the input data should be inserted.")
+    includeValuesInResponse: bool = Field(..., description="Determines if the update response should include the values of the cells that were appended. By default, responses do not include the updated values.")
+    responseValueRenderOption: ValueRenderOption = Field(..., description="Determines how values in the response should be rendered. The default render option is FORMATTED_VALUE.")
+    responseDateTimeRenderOption: DateTimeRenderOption = Field(..., description="Determines how dates, times, and durations in the response should be rendered. This is ignored if responseValueRenderOption is FORMATTED_VALUE. The default dateTime render option is SERIAL_NUMBER.")
+
+class AppendValuesResponse(BaseModel):
+    spreadsheetId: str = Field(..., description="The spreadsheet the updates were applied to.")
+    tableRange: str = Field(..., description="The range (in A1 notation) of the table that values are being appended to (before the values were appended). Empty if no table was found.")
+    updates: UpdateValuesResponse = Field(..., description="Information about the updates that were applied.")
+
+class BatchClearValuesRequestBody(BaseModel):
+    ranges: List[str] = Field(..., description="The ranges to clear, in A1 notation or R1C1 notation.")
+
+class BatchClearValuesResponse(BaseModel):
+    spreadsheetId: str = Field(..., description="The spreadsheet the updates were applied to.")
+    clearedRanges: List[str] = Field(..., description="The ranges that were cleared, in A1 notation. If the requests are for an unbounded range or a range larger than the bounds of the sheet, this is the actual ranges that were cleared, bounded to the sheet's limits.")
+
+class BatchClearByDataFilterRequestBody(BaseModel):
+    dataFilters: List[DataFilter] = Field(..., description="The DataFilters used to determine which ranges to clear.")
+
+class BatchClearByDataFilterResponse(BaseModel):
+    spreadsheetId: str = Field(..., description="The spreadsheet the updates were applied to.")
+    clearedRanges: List[str] = Field(..., description="The ranges that were cleared, in A1 notation. If the requests are for an unbounded range or a range larger than the bounds of the sheet, this is the actual ranges that were cleared, bounded to the sheet's limits.")
