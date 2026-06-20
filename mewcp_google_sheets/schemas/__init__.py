@@ -10,6 +10,9 @@ from .charts import *
 from .developer_metadata import *
 from .other import *
 from .pivot_tables import *
+from .requests import *
+from .responses import *
 from .sheets import *
 from .spreadsheets import *
 from .values import *
+
