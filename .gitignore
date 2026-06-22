@@ -15,3 +15,5 @@ get_token.py
 main.py
 pyproject.toml
 secret.json
+oauth_token.json
+.vscode/
