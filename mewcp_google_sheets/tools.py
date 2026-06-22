@@ -9,7 +9,8 @@ from schemas import (
     Spreadsheet,
     DeveloperMetadata,
     SheetProperties,
-    ValueRange
+    ValueRange,
+    UpdateValuesResponse
 )
 
 from models import (
@@ -26,7 +27,18 @@ from models import (
     BatchClearValuesRequestBody,
     BatchClearValuesResponse,
     BatchClearByDataFilterRequestBody,
-    BatchClearByDataFilterResponse
+    BatchClearByDataFilterResponse,
+    BatchGetValuesQueryParams,
+    BatchGetValuesResponse,
+    BatchGetByDataFilterRequestBody,
+    BatchGetByDataFilterResponse,
+    BatchUpdateValuesRequestBody,
+    BatchUpdateValuesResponse,
+    BatchUpdateByDataFilterRequestBody,
+    BatchUpdateByDataFilterResponse,
+    ClearValuesResponse,
+    GetValuesRequestParams,
+    UpdateValuesRequestParams
 )
 from .service import get_service
 
@@ -174,4 +186,93 @@ def batchClearByDataFilter_values_spreadsheets(spreadsheetId: str = Field(..., d
         logger.error(f"error while batch clearing values based on data filters supplied: {exc}", exc_info=True)
         return {"error": str(exc)}
 
+
+@mcp.tool(
+    name="batchGet_values_spreadsheets",
+    description="Returns one or more ranges of values from a spreadsheet. The caller must specify the spreadsheet ID and one or more ranges."
+)
+def batchGet_values_spreadsheets(spreadsheetId: str, params = BatchGetValuesQueryParams) -> BatchGetValuesResponse | ToolError:
+    try:
+        response = get_service().spreadsheets().values().batchGet(spreadsheetId = spreadsheetId, params = params).execute()
+        return response
+    except Exception as exc:
+        logger.error(f"error while getting batch values: {exc}", exc_info=True)
+        return {"error": str(exc)}
+
+@mcp.tool(
+    name="batchGetByDataFilter_values_spreadsheets",
+    description="Returns one or more ranges of values that match the specified data filters. For more information, see Read, write, and search metadata. The caller must specify the spreadsheet ID and one or more DataFilters. Ranges that match any of the data filters in the request will be returned."
+)
+def batchGetByDataFilter_values_spreadsheets(spreadsheetId: str, body: BatchGetByDataFilterRequestBody) -> BatchGetByDataFilterResponse | ToolError:
+    try:
+        response = get_service().spreadsheets().values().batchGetByDataFilter(spreadsheetId= spreadsheetId, body = body).execute()
+        return response
+    except Exception as exc:
+        logger.error(f"error while getting batch values by data filter: {exc}", exc_info=True)
+        return {"error": str(exc)}
+
+@mcp.tool(
+    name="batchUpdate_values_spreadsheets",
+    description="Sets values in one or more ranges of a spreadsheet. The caller must specify the spreadsheet ID, a valueInputOption, and one or more ValueRanges."
+)
+def batchUpdate_values_spreadsheets(spreadsheetId: str, body: BatchUpdateValuesRequestBody) -> BatchUpdateValuesResponse | ToolError:
+    try:
+        response = get_service().spreadsheets().values().batchUpdate(spreadsheetId= spreadsheetId, body = body).execute()
+        return response
+    except Exception as exc:
+        logger.error(f"error while updating batch values: {exc}", exc_info=True)
+        return {"error": str(exc)}
+
+
+@mcp.tool(
+    name="batchUpdateByDataFilter_values_spreadsheets",
+    description="Sets values in one or more ranges of a spreadsheet. For more information, see Read, write, and search metadata. The caller must specify the spreadsheet ID, a valueInputOption, and one or more DataFilterValueRanges."
+)
+def batchUpdateByDataFilter_values_spreadsheets(spreadsheetId: str, body: BatchUpdateByDataFilterRequestBody) -> BatchUpdateByDataFilterResponse | ToolError:
+    try:
+        response = get_service().spreadsheets().values().batchUpdateByDataFilter(spreadsheetId= spreadsheetId, body = body).execute()
+        return response
+    except Exception as exc:
+        logger.error(f"error while updating batch values by data filter: {exc}", exc_info=True)
+        return {"error": str(exc)}
+
+
+
+@mcp.tool(
+    name="clear_values_spreadsheets",
+    description="Clears values from a spreadsheet. The caller must specify the spreadsheet ID and range. Only values are cleared -- all other properties of the cell (such as formatting, data validation, etc..) are kept."
+)
+def clear_values_spreadsheets(spreadsheetId: str, range: str) -> ClearValuesResponse | ToolError:
+    try:
+        response = get_service().spreadsheets().values().clear(spreadsheetId= spreadsheetId, range= range).execute()
+        return response
+    except Exception as exc:
+        logger.error(f"error while clearing values from spreadsheet: {exc}", exc_info=True)
+        return {"error": str(exc)}
+
+
+
+@mcp.tool(
+    name="get_values_spreadsheets",
+    description="Returns a range of values from a spreadsheet. The caller must specify the spreadsheet ID and a range."
+)
+def get_values_spreadsheets(spreadsheetId: str, range: str, params: GetValuesRequestParams) -> ValueRange | ToolError:
+    try:
+        response = get_service().spreadsheets().values().get(spreadsheetId= spreadsheetId, range= range, params = params).execute()
+        return response
+    except Exception as exc:
+        logger.error(f"error while getting values from spreadsheet: {exc}", exc_info=True)
+        return {"error": str(exc)}
+
+@mcp.tool(
+    name="update_values_spreadsheets",
+    description="Sets values in a range of a spreadsheet. The caller must specify the spreadsheet ID, range, and a valueInputOption."
+)
+def update_values_spreadsheets(spreadsheetId: str, range: str, params: UpdateValuesRequestParams, body: ValueRange) -> UpdateValuesResponse | ToolError:
+    try:
+        response = get_service().spreadsheets().values().get(spreadsheetId= spreadsheetId, range= range, params = params, body = body).execute()
+        return response
+    except Exception as exc:
+        logger.error(f"error while updating values in spreadsheet: {exc}", exc_info=True)
+        return {"error": str(exc)}
 
